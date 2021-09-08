@@ -24,6 +24,7 @@ elMoviesList.appendChild(moviesFragment);
 
 
 // Show movie info 
+
 var elMovieMoreBtn = document.querySelectorAll('.movie__more-link');
 var elMovieModal = document.querySelector('#movieModal');
 
