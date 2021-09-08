@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movies List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="mt-3 mb-5 text-center">HydraMovies</h1>
+
+    <div class="movies row"></div>
+  </div>
+
+
+  <!-- MOVIE-MODAL -->
+
+  <div class="modal fade" id="movieModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header align-items-start">
+          <h3 class="movie__title card-title h4 mr-3 mb-0"></h3>
+
+          <div class="movie__info d-flex flex-shrink-0">
+            <div class="movie__info-item d-inline-flex align-items-center fw-bold me-3" aria-label="Imdb rating">
+              <img class="me-1" src="./img/icon-star.svg" width="24" height="24" alt="" aria-hidden="true">
+              <span class="movie__info-rating"></span>
+            </div>
+
+            <div class="movie__info-item d-inline-flex align-items-center fw-bold me-3" aria-label="Release year">
+              <img class="me-1" src="./img/icon-calendar.svg" width="24" height="24" alt="" aria-hidden="true">
+              <span class="movie__info-year"></span>
+            </div>
+
+            <div class="movie__info-item d-inline-flex align-items-center fw-bold" aria-label="Duration">
+              <img class="me-1" src="./img/icon-clock.svg" width="24" height="24" alt="" aria-hidden="true">
+              <span class="movie__info-duration"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-body d-flex">
+          <div class="ratio-16x9 flex-shrink-0 w-50 me-4">
+            <iframe class="movie__trailer w-100" height="400" title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="d-flex flex-column">
+            <p class="movie__genres fw-bold"></p>
+            <p class="movie__summary flex-grow-1"></p>
+            <a class="movie__imdb-link link-info d-inline-flex align-items-center" target="_blank">
+              <span class="me-2">Show on IMDb</span>
+              <img src="./img/icon-external-link.svg" width="20" height="20" alt="" aria-hidden="true">
+            </a>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- TEMPLATES -->
+
+  <template id="tempMovie">
+    <div class="movies__item col-md-6 mb-3">
+      <div class="movie card h-100">
+        <img class="movie__poster card-img-top"
+          src="https://image.tmdb.org/t/p/original/12ijlLGQ5QQGZhhzsevfcIFCahT.jpg" height="400">
+        <div class="card-body d-flex flex-column">
+          <h3 class="movie__title card-title h4 mb-3 text-truncate"></h3>
+
+          <div class="movie__info d-flex mb-3">
+            <div class="movie__info-item d-inline-flex align-items-center fw-bold me-3" aria-label="Imdb rating">
+              <img class="me-1" src="./img/icon-star.svg" width="24" height="24" alt="" aria-hidden="true">
+              <span class="movie__info-rating"></span>
+            </div>
+
+            <div class="movie__info-item d-inline-flex align-items-center fw-bold me-3" aria-label="Release year">
+              <img class="me-1" src="./img/icon-calendar.svg" width="24" height="24" alt="" aria-hidden="true">
+              <span class="movie__info-year"></span>
+            </div>
+
+            <div class="movie__info-item d-inline-flex align-items-center fw-bold" aria-label="Duration">
+              <img class="me-1" src="./img/icon-clock.svg" width="24" height="24" alt="" aria-hidden="true">
+              <span class="movie__info-duration"></span>
+            </div>
+          </div>
+
+          <p class="movie__genres fw-bold flex-grow-1"></p>
+
+          <a class="movie__more-link btn btn-primary d-inline-flex align-items-center align-self-start"
+            href="#movieModal" data-bs-toggle="modal">
+            <img class="me-1" src="./img/icon-info.svg" width="24" height="24" alt="" aria-hidden="true">
+            <span>More info</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script src="./js/movies.js"></script>
+  <script src="./js/index.js"></script>
+</body>
+
+</html>
