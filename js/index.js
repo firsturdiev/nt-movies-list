@@ -3,7 +3,7 @@
 var elMoviesList = document.querySelector('.movies');
 var tempMovie = document.querySelector('#tempMovie').content;
 var moviesFragment = document.createDocumentFragment();
-var movies = moviesData.slice(0, 500);
+var movies = moviesData.slice(0, 100);
 
 function showMovies(movies) {
   elMoviesList.innerHTML = '';
@@ -50,13 +50,33 @@ elMovieMoreBtn.forEach(btn => {
 // Filters
 
 let filteredMovies = [];
-// let categories = ['Uncategorized', 'Documentary', 'Music', 'Adventure', 'Animation', 'Comedy', 'Family', 'Fantasy', 'Horror', 'Drama', 'Sport', 'Romance', 'Action', 'Sci-Fi', 'News', 'History', 'Thriller', 'Western', 'Crime', 'Mystery', 'Biography', 'Musical', 'War', 'Reality-TV'];
 const elFilters = document.querySelector('.filters');
 const elFiltersQuery = elFilters.q;
 const elFiltersCategories = elFilters.categories;
 const elFiltersYearMin = elFilters.from_year;
 const elFiltersYearMax = elFilters.to_year;
 const elFiltersRating = elFilters.rating;
+const elFiltersFilter = elFilters.filter;
+
+function filterMovies(arr, option) {
+  if (option === 'a-z') {
+    arr.sort((a, b) => {
+      if (a.title > b.title) return 1;
+      if (a.title < b.title) return -1;
+      return 0;
+    })
+  }
+  else if (option === 'rating') {
+    arr.sort((a, b) => {
+      return b.imdbRating - a.imdbRating;
+    })
+  }
+  else if (option === 'year') {
+    arr.sort((a, b) => {
+      return b.year - a.year;
+    })
+  }
+}
 
 elFilters.addEventListener('submit', e => {
   e.preventDefault();
@@ -71,8 +91,10 @@ elFilters.addEventListener('submit', e => {
     );
   });
 
-if (filteredMovies.length > 0)
-  showMovies(filteredMovies);
-else
-  elMoviesList.innerHTML = '<p class="text-center fw-bold h2 mb-0">No movie found</p>'
+  if (filteredMovies.length > 0) {
+    filterMovies(filteredMovies, elFiltersFilter.value)
+    showMovies(filteredMovies);
+  }
+  else
+    elMoviesList.innerHTML = '<p class="text-center fw-bold h2 mb-0">No movie found</p>'
 })
