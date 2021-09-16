@@ -5,15 +5,18 @@ var tempMovie = document.querySelector('#tempMovie').content;
 var moviesFragment = document.createDocumentFragment();
 var movies = moviesData.slice(0, 100);
 
-function showMovies(movies) {
+function showMovies(movies, searchWord) {
   elMoviesList.innerHTML = '';
 
   for (var i = 0; i < movies.length; i++) {
     var newMovie = tempMovie.cloneNode(true);
     newMovie.querySelector('.movie__poster').src = movies[i].youtubePoster;
     newMovie.querySelector('.movie__poster').alt = `Poster of ${movies[i].title}`;
-    newMovie.querySelector('.movie__title').textContent = movies[i].title;
     newMovie.querySelector('.movie__title').title = movies[i].title;
+    if (searchWord.source !== '(?:)' && searchWord)
+      newMovie.querySelector('.movie__title').innerHTML = movies[i].title.replace(searchWord, `<mark class="p-0 bg-warning">${searchWord.source}</mark>`);
+    else
+      movies[i].title;
     newMovie.querySelector('.movie__info-rating').textContent = movies[i].imdbRating;
     newMovie.querySelector('.movie__info-year').textContent = movies[i].year;
     newMovie.querySelector('.movie__info-duration').textContent = `${Math.ceil(movies[i].runtime / 60)}h ${movies[i].runtime % 60}min`;
@@ -26,7 +29,7 @@ function showMovies(movies) {
   elMoviesList.appendChild(moviesFragment);
 }
 
-showMovies(movies);
+showMovies(movies, '');
 
 
 // Show movie info 
@@ -88,7 +91,7 @@ function filterMovies(arr, option) {
 elFilters.addEventListener('submit', e => {
   e.preventDefault();
 
-  let regexSearch = new RegExp(elFiltersQuery.value, 'gi');
+  let regexSearch = new RegExp(elFiltersQuery.value.trim(), 'gi');
   filteredMovies = movies.filter(movie => {
     return (
       (movie.title.match(regexSearch)) &&
@@ -100,7 +103,7 @@ elFilters.addEventListener('submit', e => {
 
   if (filteredMovies.length > 0) {
     filterMovies(filteredMovies, elFiltersFilter.value)
-    showMovies(filteredMovies);
+    showMovies(filteredMovies, regexSearch);
   }
   else
     elMoviesList.innerHTML = '<p class="text-center fw-bold h2 mb-0">No movie found</p>'
