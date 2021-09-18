@@ -1,9 +1,11 @@
+const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+
 // Show movies
 
 var elMoviesList = document.querySelector('.movies');
 var tempMovie = document.querySelector('#tempMovie').content;
 var moviesFragment = document.createDocumentFragment();
-var movies = moviesData.slice(0, 100);
+var movies = moviesData.slice(0, 50);
 
 function showMovies(movies, searchWord) {
   elMoviesList.innerHTML = '';
@@ -16,13 +18,20 @@ function showMovies(movies, searchWord) {
     if (searchWord.source !== '(?:)' && searchWord)
       newMovie.querySelector('.movie__title').innerHTML = movies[i].title.replace(searchWord, `<mark class="p-0 bg-warning">${searchWord.source}</mark>`);
     else
-      movies[i].title;
+      newMovie.querySelector('.movie__title').textContent = movies[i].title;
     newMovie.querySelector('.movie__info-rating').textContent = movies[i].imdbRating;
     newMovie.querySelector('.movie__info-year').textContent = movies[i].year;
     newMovie.querySelector('.movie__info-duration').textContent = `${Math.ceil(movies[i].runtime / 60)}h ${movies[i].runtime % 60}min`;
     newMovie.querySelector('.movie__genres').textContent = movies[i].categories.join(', ');
-    newMovie.querySelector('.movie__more-link').dataset.index = i;
+    newMovie.querySelector('.movie__more-link').dataset.index = movies[i].imdbId;
+    newMovie.querySelector('.movie__bookmark').dataset.uniqueId = movies[i].imdbId;
 
+    if (bookmarks.findIndex(bookmark => bookmark.imdbId === movies[i].imdbId) >= 0) {
+      newMovie.querySelector('.movie__bookmark').classList.add('movie__bookmark--added');
+      newMovie.querySelector('.movie__bookmark').children[0].src = './img/icon-bookmark-added.svg';
+      newMovie.querySelector('.movie__bookmark').children[1].textContent = 'Added to bookmark';
+    }
+    
     moviesFragment.appendChild(newMovie);
   }
 
@@ -34,12 +43,12 @@ showMovies(movies, '');
 
 // Show movie info 
 
-var elMovieMoreBtn = document.querySelectorAll('.movie__more-link');
 var elMovieModal = document.querySelector('#movieModal');
 
-elMovieMoreBtn.forEach(btn => {
-  btn.addEventListener('click', () => {
-    var movie = movies[Number(btn.dataset.index)];
+elMoviesList.addEventListener('click', (e) => {
+  if (e.target.matches('.movie__more-link')) {
+    let movie = movies.find(movie => movie.imdbId === e.target.dataset.index);
+    elMovieModal.dataset.uniqueId = movie.imdbId;
     elMovieModal.querySelector('.movie__title').textContent = movie.title;
     elMovieModal.querySelector('.movie__info-rating').textContent = movie.imdbRating;
     elMovieModal.querySelector('.movie__info-year').textContent = movie.year;
@@ -47,7 +56,32 @@ elMovieMoreBtn.forEach(btn => {
     elMovieModal.querySelector('.movie__trailer').src = `https://www.youtube.com/embed/${movie.youtubeId}`;
     elMovieModal.querySelector('.movie__summary').textContent = movie.summary;
     elMovieModal.querySelector('.movie__imdb-link').href = `https://www.imdb.com/title/${movie.imdbId}`;
-  })
+    elMovieModal.querySelector('.movie__bookmark').dataset.uniqueId = movie.imdbId;
+
+    if (bookmarks.findIndex(bookmark => bookmark.imdbId === movie.imdbId) >= 0) {
+      elMovieModal.querySelector('.movie__bookmark').classList.add('movie__bookmark--added');
+      elMovieModal.querySelector('.movie__bookmark').children[0].src = './img/icon-bookmark-added.svg';
+      elMovieModal.querySelector('.movie__bookmark').children[1].textContent = 'Added to bookmark';
+    }
+  }
+})
+
+elMovieModal.addEventListener('hidden.bs.modal', () => {
+  elMovieModal.querySelector('.movie__trailer').src = '';
+  elMovieModal.querySelector('.movie__bookmark').classList.remove('movie__bookmark--added');
+  elMovieModal.querySelector('.movie__bookmark').children[0].src = './img/icon-bookmark-add.svg';
+  elMovieModal.querySelector('.movie__bookmark').children[1].textContent = 'Add to bookmark';
+
+  if (bookmarks.findIndex(bookmark => bookmark.imdbId === elMovieModal.dataset.uniqueId) >= 0) {
+    elMoviesList.querySelector(`.movie__bookmark[data-unique-id="${elMovieModal.dataset.uniqueId}"`).classList.add('movie__bookmark--added');
+    elMoviesList.querySelector(`.movie__bookmark[data-unique-id="${elMovieModal.dataset.uniqueId}"`).children[0].src = './img/icon-bookmark-added.svg';
+    elMoviesList.querySelector(`.movie__bookmark[data-unique-id="${elMovieModal.dataset.uniqueId}"`).children[1].textContent = 'Added to bookmark';
+  }
+  else {
+    elMoviesList.querySelector(`.movie__bookmark[data-unique-id="${elMovieModal.dataset.uniqueId}"`).classList.remove('movie__bookmark--added');
+    elMoviesList.querySelector(`.movie__bookmark[data-unique-id="${elMovieModal.dataset.uniqueId}"`).children[0].src = './img/icon-bookmark-add.svg';
+    elMoviesList.querySelector(`.movie__bookmark[data-unique-id="${elMovieModal.dataset.uniqueId}"`).children[1].textContent = 'Add to bookmark';
+  }
 })
 
 // Filters
@@ -108,3 +142,120 @@ elFilters.addEventListener('submit', e => {
   else
     elMoviesList.innerHTML = '<p class="text-center fw-bold h2 mb-0">No movie found</p>'
 })
+
+
+// Bookmarks
+
+elMoviesList.addEventListener('click', e => {
+  if (e.target.matches('.movie__bookmark')) {
+    if (e.target.matches('.movie__bookmark--added')) {
+      e.target.classList.remove('movie__bookmark--added');
+      e.target.children[0].src = './img/icon-bookmark-add.svg';
+      e.target.children[1].textContent = 'Add to bookmark';
+
+      let bookmarkIndex = bookmarks.findIndex(bookmark => e.target.dataset.uniqueId === bookmark.imdbId);
+      bookmarks.splice(bookmarkIndex, 1);
+      console.log(bookmarks);
+    }
+    else {
+      e.target.classList.add('movie__bookmark--added');
+      e.target.children[0].src = './img/icon-bookmark-added.svg';
+      e.target.children[1].textContent = 'Added to bookmark';
+
+      let newBookmark = movies.find(movie => e.target.dataset.uniqueId === movie.imdbId);
+      bookmarks.push(newBookmark);
+      console.log(bookmarks);
+    }
+
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  }
+})
+
+elMovieModal.addEventListener('click', e => {
+  if (e.target.matches('.movie__bookmark')) {
+    if (e.target.matches('.movie__bookmark--added')) {
+      e.target.classList.remove('movie__bookmark--added');
+      e.target.children[0].src = './img/icon-bookmark-add.svg';
+      e.target.children[1].textContent = 'Add to bookmark';
+
+      let bookmarkIndex = bookmarks.findIndex(bookmark => e.target.dataset.uniqueId === bookmark.imdbId);
+      bookmarks.splice(bookmarkIndex, 1);
+      console.log(bookmarks);
+    }
+    else {
+      e.target.classList.add('movie__bookmark--added');
+      e.target.children[0].src = './img/icon-bookmark-added.svg';
+      e.target.children[1].textContent = 'Added to bookmark';
+
+      let newBookmark = movies.find(movie => e.target.dataset.uniqueId === movie.imdbId);
+      bookmarks.push(newBookmark);
+      console.log(bookmarks);
+    }
+
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  }
+})
+
+// Pagination
+
+// const elsPaginationLinks = document.querySelectorAll('.pagination__link');
+
+// let numberOfItems = movies.length;
+// const numberPerPage = 10;
+// const currentPage = 1;
+// let numberOfPages = Math.ceil(numberOfItems / numberPerPage);
+
+// function accomodatePage(clickedPage) {
+//   if (clickedPage <= 1) {
+//     return clickedPage + 1;
+//   }
+//   if (clickedPage >= numberOfPages) {
+//     return clickedPage - 1;
+//   };
+
+//   return clickedPage;
+// }
+
+// function buildPagination(clickedPage) {
+//   const currPageNum = accomodatePage(clickedPage);
+
+//   if (numberOfPages >= 5) {
+//     for (let i = -1; i < 4; i++) {
+//       elsPaginationLinks[i + 1].textContent = currPageNum + i;
+//     }
+//   }
+//   else {
+//     for (let i = 0; i < numberOfPages; i++) {
+//       elsPaginationLinks[i + 1].textContent = i + 1;
+//     }
+//   }
+// }
+
+// function buildPage(currPage) {
+//   const trimStart = (currPage - 1) * numberPerPage;
+//   const trimEnd = trimStart + numberPerPage;
+
+//   if (filteredMovies.length > 0) {
+//     numberOfItems = filteredMovies.length;
+//     numberOfPages = Math.ceil(numberOfItems / numberPerPage)
+//     showMovies(filteredMovies.slice(trimStart, trimEnd), new RegExp(elFiltersQuery.value.trim(), 'gi'));
+//     return;
+//   }
+//   showMovies(movies.slice(trimStart, trimEnd), '');
+// }
+
+// window.onload = () => {
+//   buildPage(1);
+//   buildPagination(currentPage);
+
+//   elsPaginationLinks.forEach(link => {
+//     link.addEventListener('click', (e) => {
+//       e.preventDefault();
+
+//       let clickedPage = Number(link.textContent);
+//       buildPagination(clickedPage);
+//       console.log(`Page clicked on ${clickedPage}`);
+//       buildPage(clickedPage);
+//     })
+//   })
+// }
