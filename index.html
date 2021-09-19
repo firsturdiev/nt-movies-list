@@ -97,17 +97,27 @@
     <nav aria-label="Movies navigation">
       <ul class="pagination justify-content-end">
         <li class="page-item">
-          <button class="pagination__control-btn page-link" aria-label="Previous" data-page-count="-1">
+          <button class="pagination__control pagination__control--prev page-link" aria-label="Previous" data-page-count="-1">
             <span aria-hidden="true">&laquo;</span>
           </button>
         </li>
-        <li class="page-item"><a class="pagination__link page-link" href="#"></a></li>
-        <li class="page-item"><a class="pagination__link page-link" href="#"></a></li>
-        <li class="page-item"><a class="pagination__link page-link" href="#"></a></li>
-        <li class="page-item"><a class="pagination__link page-link" href="#"></a></li>
-        <li class="page-item"><a class="pagination__link page-link" href="#"></a></li>
+        <li class="page-item active">
+          <button class="pagination__link page-link">1</button>
+        </li>
         <li class="page-item">
-          <button class="pagination__control-btn page-link" aria-label="Next" data-page-count="1">
+          <button class="pagination__link page-link">2</button>
+        </li>
+        <li class="page-item">
+          <button class="pagination__link page-link">3</button>
+        </li>
+        <li class="page-item">
+          <button class="pagination__link page-link">4</button>
+        </li>
+        <li class="page-item">
+          <button class="pagination__link page-link">5</button>
+        </li>
+        <li class="page-item">
+          <button class="pagination__control pagination__control--next page-link" aria-label="Next" data-page-count="1">
             <span aria-hidden="true">&raquo;</span>
           </button>
         </li>
@@ -172,24 +182,25 @@
     </div>
   </div>
 
-<!-- WATCHLIST-MODAL -->
+  <!-- WATCHLIST-MODAL -->
 
-<div class="modal fade" id="watchlistModal" tabindex="-1" aria-labelledby="watchlistModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="watchlistModalLabel">Watchlist</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+  <div class="watchlist-modal modal fade" id="watchlistModal" tabindex="-1" aria-labelledby="watchlistModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="watchlistModalLabel">Watchlist</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="watchlist-modal__list list-group"></ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 
   <!-- TEMPLATES -->
@@ -224,7 +235,8 @@
           <div>
             <a class="movie__more-link btn btn-primary d-inline-flex align-items-center me-2" href="#movieModal"
               data-bs-toggle="modal">
-              <img class="me-1" style="pointer-events: none;" src="./img/icon-info.svg" width="24" height="24" alt="" aria-hidden="true">
+              <img class="me-1" style="pointer-events: none;" src="./img/icon-info.svg" width="24" height="24" alt=""
+                aria-hidden="true">
               <span style="pointer-events: none;">More info</span>
             </a>
 
